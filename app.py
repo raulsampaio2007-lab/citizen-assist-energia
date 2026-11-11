@@ -46,6 +46,9 @@ def conversar(pergunta):
     novo = resposta["perfil"]
     for campo in CAMPOS:
         st.session_state[campo] = int(round(novo[campo]))
+    # as barras de potência andam de 100 em 100
+    for campo in ["pot_inverno", "pot_verao"]:
+        st.session_state[campo] = int(round(novo[campo] / 100) * 100)
     for chave in ["sem_telhado", "cadunico", "orcamento"]:
         if chave in novo:
             st.session_state.extras[chave] = novo[chave]
@@ -127,11 +130,13 @@ with coluna_chat:
 
 with coluna_dados:
     st.subheader("Dados da sua casa")
-    st.number_input("Pessoas", min_value=1, max_value=15, key="pessoas")
-    st.number_input("Minutos por banho", min_value=1, max_value=60, key="minutos")
-    st.number_input("Chuveiro no inverno (W)", min_value=1000, max_value=12000, step=100, key="pot_inverno")
-    st.number_input("Chuveiro no verão (W)", min_value=500, max_value=12000, step=100, key="pot_verao")
-    st.number_input("Resto da casa (kWh/mês)", min_value=0, max_value=3000, key="outros_kwh")
+    # teste com usuário: no campo de digitar, o número só valia depois do Enter,
+    # e no celular a pessoa não apertava. A barra atualiza assim que solta.
+    st.slider("Pessoas", min_value=1, max_value=15, key="pessoas")
+    st.slider("Minutos por banho", min_value=1, max_value=60, key="minutos")
+    st.slider("Chuveiro no inverno (W)", min_value=1000, max_value=12000, step=100, key="pot_inverno")
+    st.slider("Chuveiro no verão (W)", min_value=500, max_value=12000, step=100, key="pot_verao")
+    st.slider("Resto da casa (kWh/mês)", min_value=0, max_value=3000, key="outros_kwh")
     st.button("Voltar ao exemplo", on_click=comecar_do_zero)
 
     st.subheader("Comparação em 12 meses")

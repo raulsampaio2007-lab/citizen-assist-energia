@@ -140,18 +140,18 @@ class TestTela(unittest.TestCase):
 
     def test_mudar_o_painel_muda_a_tabela(self):
         # problema achado no teste com usuário: a tabela não acompanhava o painel
-        self.tela.number_input(key="pessoas").set_value(2).run()
+        self.tela.slider(key="pessoas").set_value(2).run()
         self.assertIn("R$ 175,33", self.texto_da_tabela())
 
     def test_chat_usa_o_painel(self):
-        self.tela.number_input(key="pessoas").set_value(2).run()
+        self.tela.slider(key="pessoas").set_value(2).run()
         self.tela.chat_input[0].set_value("quanto meu chuveiro gasta?").run()
         self.assertIn("Com 2 pessoas", self.tela.session_state.mensagens[-1]["texto"])
 
     def test_chat_muda_o_painel(self):
         self.tela.chat_input[0].set_value("somos 3 pessoas, banho de 10 minutos").run()
-        self.assertEqual(self.tela.number_input(key="pessoas").value, 3)
-        self.assertEqual(self.tela.number_input(key="minutos").value, 10)
+        self.assertEqual(self.tela.slider(key="pessoas").value, 3)
+        self.assertEqual(self.tela.slider(key="minutos").value, 10)
 
 
 if __name__ == "__main__":
