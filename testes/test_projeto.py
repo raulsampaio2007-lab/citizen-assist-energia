@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import assistente
 import calculos
-from app import app
+from streamlit.testing.v1 import AppTest
 
 
 class TestCalculos(unittest.TestCase):
@@ -124,42 +124,34 @@ class TestAssistente(unittest.TestCase):
         self.assertEqual(r["perfil"]["pessoas"], 15)
 
 
-class TestRotas(unittest.TestCase):
+class TestTela(unittest.TestCase):
+    # usa o testador do próprio Streamlit, que roda o app.py sem abrir o navegador
     def setUp(self):
-        self.cliente = app.test_client()
+        pasta = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.tela = AppTest.from_file(os.path.join(pasta, "app.py"), default_timeout=30)
+        self.tela.run()
 
-    def test_pagina_abre(self):
-        self.assertEqual(self.cliente.get("/").status_code, 200)
+    def texto_da_tabela(self):
+        return " ".join(self.tela.table[0].value["Economia/ano"].tolist())
 
-    def test_chat(self):
-        r = self.cliente.post("/api/chat", json={"mensagem": "quanto meu chuveiro gasta?"})
-        self.assertEqual(r.status_code, 200)
-        self.assertIn("kWh", r.get_json()["texto"])
+    def test_tela_abre_sem_erro(self):
+        self.assertFalse(self.tela.exception)
+        self.assertIn("R$ 471,29", self.texto_da_tabela())
 
-    def test_chat_vazio(self):
-        self.assertEqual(self.cliente.post("/api/chat", json={"mensagem": " "}).status_code, 400)
+    def test_mudar_o_painel_muda_a_tabela(self):
+        # problema achado no teste com usuário: a tabela não acompanhava o painel
+        self.tela.number_input(key="pessoas").set_value(2).run()
+        self.assertIn("R$ 175,33", self.texto_da_tabela())
 
-    def test_simular_com_texto_errado(self):
-        self.assertEqual(self.cliente.post("/api/simular", json={"pessoas": "abc"}).status_code, 400)
+    def test_chat_usa_o_painel(self):
+        self.tela.number_input(key="pessoas").set_value(2).run()
+        self.tela.chat_input[0].set_value("quanto meu chuveiro gasta?").run()
+        self.assertIn("Com 2 pessoas", self.tela.session_state.mensagens[-1]["texto"])
 
-    def test_perfil_fica_salvo_na_conversa(self):
-        self.cliente.post("/api/chat", json={"mensagem": "somos 2 pessoas"})
-        r = self.cliente.post("/api/chat", json={"mensagem": "quanto meu chuveiro gasta?"})
-        self.assertEqual(r.get_json()["perfil"]["pessoas"], 2)
-
-    def test_chat_usa_os_campos_do_painel(self):
-        # problema achado no teste com usuário: mudava o painel, não clicava em
-        # Recalcular, e o chat respondia com os números antigos
-        r = self.cliente.post("/api/chat", json={"mensagem": "quanto meu chuveiro gasta?",
-                                                 "campos": {"pessoas": "2", "minutos": "8"}})
-        dados = r.get_json()
-        self.assertEqual(dados["perfil"]["pessoas"], 2)
-        self.assertIn("Com 2 pessoas", dados["texto"])
-
-    def test_chat_ignora_campo_com_texto(self):
-        r = self.cliente.post("/api/chat", json={"mensagem": "quanto meu chuveiro gasta?",
-                                                 "campos": {"pessoas": "abc"}})
-        self.assertEqual(r.status_code, 200)
+    def test_chat_muda_o_painel(self):
+        self.tela.chat_input[0].set_value("somos 3 pessoas, banho de 10 minutos").run()
+        self.assertEqual(self.tela.number_input(key="pessoas").value, 3)
+        self.assertEqual(self.tela.number_input(key="minutos").value, 10)
 
 
 if __name__ == "__main__":

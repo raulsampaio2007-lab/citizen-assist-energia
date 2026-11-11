@@ -25,7 +25,7 @@ A necessidade que escolhemos foi a água quente do banho. Analisamos dois casos:
 - Calcula o gasto de outros aparelhos a partir da potência e das horas de uso.
 - Explica tarifa social e impacto ambiental, e mostra fontes e limitações das contas.
 
-As respostas usam as mesmas funções da análise (`calculos.py`). Escolhemos fazer o chat com regras de palavras-chave, sem modelo de linguagem, para o assistente não inventar número. Isso tem um custo: ele só entende os assuntos que programamos, e fora disso avisa que não sabe.
+O projeto é todo em Python. A tela é feita com Streamlit, que monta a página a partir do código Python, sem precisar escrever HTML ou JavaScript. As respostas usam as mesmas funções da análise (`calculos.py`). Escolhemos fazer o chat com regras de palavras-chave, sem modelo de linguagem, para o assistente não inventar número. Isso tem um custo: ele só entende os assuntos que programamos, e fora disso avisa que não sabe.
 
 ## Como executar
 
@@ -39,10 +39,10 @@ Precisa de Python 3.10 ou mais novo. No Windows:
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
-python app.py
+streamlit run app.py
 ```
 
-Depois é só abrir http://localhost:5000 no navegador.
+O navegador abre sozinho em http://localhost:8501.
 
 Para gerar de novo as tabelas da análise e rodar os testes automáticos:
 
@@ -77,7 +77,7 @@ A explicação completa está em [docs/analise_energetica.md](docs/analise_energ
 
 | Caminho | O que tem |
 |---|---|
-| `app.py` | Servidor web (Flask) |
+| `app.py` | Tela do assistente (Streamlit): chat, dados da casa e tabela |
 | `assistente.py` | Entende a pergunta e monta a resposta |
 | `calculos.py` | Contas de energia, conta de luz e alternativas |
 | `analise.py` | Gera as tabelas da pasta `resultados` |
@@ -87,4 +87,4 @@ A explicação completa está em [docs/analise_energetica.md](docs/analise_energ
 | `docs/referencias.md` | Fontes usadas |
 | `docs/testes_com_usuarios.md` | Registro dos testes com usuários e ajustes |
 | `testes/` | Testes automáticos do código |
-| `templates/` e `static/` | Tela do assistente |
+| `render.yaml` | Configuração da versão online no Render |
