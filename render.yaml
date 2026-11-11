@@ -1,0 +1,8 @@
+# Configuração para colocar o assistente online no Render (plano grátis)
+services:
+  - type: web
+    name: citizen-assist-energia
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
