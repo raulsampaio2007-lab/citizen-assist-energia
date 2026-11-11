@@ -29,6 +29,10 @@ As respostas usam as mesmas funções da análise (`calculos.py`). Escolhemos fa
 
 ## Como executar
 
+A versão online está em https://citizen-assist-energia.onrender.com. Ela roda no plano grátis do Render, então a primeira abertura pode levar uns 50 segundos.
+
+Para rodar no computador:
+
 Precisa de Python 3.10 ou mais novo. No Windows:
 
 ```bash
