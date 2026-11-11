@@ -136,6 +136,10 @@ with coluna_dados:
     st.slider("Minutos por banho", min_value=1, max_value=60, key="minutos")
     st.slider("Chuveiro no inverno (W)", min_value=1000, max_value=12000, step=100, key="pot_inverno")
     st.slider("Chuveiro no verão (W)", min_value=500, max_value=12000, step=100, key="pot_verao")
+    # teste com usuário: a pessoa não sabia o que colocar aqui
+    st.caption("Não sabe a potência? Pode deixar como está, 5500 W e 3500 W são os valores mais comuns. "
+               "Se quiser conferir, ela vem escrita em watts (W) na etiqueta ou na caixa do chuveiro. "
+               "Volts (127 V ou 220 V) é outra coisa e não entra na conta.")
     st.slider("Resto da casa (kWh/mês)", min_value=0, max_value=3000, key="outros_kwh")
     st.button("Voltar ao exemplo", on_click=comecar_do_zero)
 
