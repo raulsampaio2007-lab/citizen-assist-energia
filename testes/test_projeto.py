@@ -147,6 +147,20 @@ class TestRotas(unittest.TestCase):
         r = self.cliente.post("/api/chat", json={"mensagem": "quanto meu chuveiro gasta?"})
         self.assertEqual(r.get_json()["perfil"]["pessoas"], 2)
 
+    def test_chat_usa_os_campos_do_painel(self):
+        # problema achado no teste com usuário: mudava o painel, não clicava em
+        # Recalcular, e o chat respondia com os números antigos
+        r = self.cliente.post("/api/chat", json={"mensagem": "quanto meu chuveiro gasta?",
+                                                 "campos": {"pessoas": "2", "minutos": "8"}})
+        dados = r.get_json()
+        self.assertEqual(dados["perfil"]["pessoas"], 2)
+        self.assertIn("Com 2 pessoas", dados["texto"])
+
+    def test_chat_ignora_campo_com_texto(self):
+        r = self.cliente.post("/api/chat", json={"mensagem": "quanto meu chuveiro gasta?",
+                                                 "campos": {"pessoas": "abc"}})
+        self.assertEqual(r.status_code, 200)
+
 
 if __name__ == "__main__":
     unittest.main()

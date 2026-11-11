@@ -41,7 +41,11 @@ function atualizarPainel(perfil, tabela) {
   ["pessoas", "minutos", "pot_inverno", "pot_verao", "outros_kwh"].forEach(function (nome) {
     formDados.elements[nome].value = Math.round(perfil[nome]);
   });
+  atualizarTabela(tabela);
+}
 
+// separado do atualizarPainel para não apagar o campo enquanto a pessoa digita
+function atualizarTabela(tabela) {
   const hoje = tabela.hoje;
   document.getElementById("resumo").textContent =
     "Hoje: " + Math.round(hoje.consumo_ano) + " kWh por ano, sendo " + Math.round(hoje.chuveiro_ano) +
@@ -78,7 +82,7 @@ async function enviar(url, corpo) {
 async function perguntar(texto) {
   adicionarMensagem(texto, "usuario");
   try {
-    const dados = await enviar("/api/chat", { mensagem: texto });
+    const dados = await enviar("/api/chat", { mensagem: texto, campos: lerCampos() });
     adicionarMensagem(dados.texto, "bot", dados.aviso, dados.fontes);
     atualizarPainel(dados.perfil, dados.tabela);
   } catch (erro) {
@@ -101,16 +105,35 @@ document.querySelectorAll("#atalhos button").forEach(function (botao) {
   });
 });
 
-formDados.addEventListener("submit", async function (evento) {
-  evento.preventDefault();
-  const corpo = Object.fromEntries(new FormData(formDados));
-  const dados = await enviar("/api/simular", corpo);
+function lerCampos() {
+  return Object.fromEntries(new FormData(formDados));
+}
+
+async function recalcular(avisarNoChat) {
+  const dados = await enviar("/api/simular", lerCampos());
   if (dados.erro) {
     adicionarMensagem(dados.erro, "bot");
     return;
   }
-  atualizarPainel(dados.perfil, dados.tabela);
-  adicionarMensagem("Recalculei com os seus dados. A tabela ao lado já mudou, e as próximas respostas usam esses números.", "bot");
+  atualizarTabela(dados.tabela);
+  if (avisarNoChat) {
+    adicionarMensagem("Recalculei com os seus dados. A tabela já mudou, e as próximas respostas usam esses números.", "bot");
+  }
+}
+
+formDados.addEventListener("submit", function (evento) {
+  evento.preventDefault();
+  recalcular(true);
+});
+
+// teste com usuário: a pessoa mudava o número e esperava a tabela mudar sozinha,
+// sem clicar em Recalcular. Agora recalcula uns instantes depois de digitar.
+let espera = null;
+formDados.addEventListener("input", function () {
+  clearTimeout(espera);
+  espera = setTimeout(function () {
+    recalcular(false);
+  }, 500);
 });
 
 document.getElementById("limpar").addEventListener("click", async function () {
