@@ -51,23 +51,48 @@ function atualizarTabela(tabela) {
     "Hoje: " + Math.round(hoje.consumo_ano) + " kWh por ano, sendo " + Math.round(hoje.chuveiro_ano) +
     " kWh do chuveiro. Conta estimada de " + reais(hoje.conta_ano) + " por ano.";
 
-  const corpo = document.getElementById("corpo-tabela");
-  corpo.innerHTML = "";
+  // primeira linha é a situação de hoje, para dar para comparar com as alternativas
+  const linhas = [["Hoje, sem mudar nada", "R$ 0,00", reais(hoje.conta_ano), "-", "-"]];
   tabela.alternativas.forEach(function (alt) {
-    const linha = document.createElement("tr");
     let retorno = "Não se paga";
     if (alt.investimento === 0) {
       retorno = "Imediato";
     } else if (alt.retorno_anos !== null) {
       retorno = alt.retorno_anos.toFixed(1).replace(".", ",") + " anos";
     }
-    [alt.nome, reais(alt.investimento), reais(alt.economia_ano), retorno].forEach(function (valor) {
+    linhas.push([alt.nome, reais(alt.investimento), reais(alt.conta_ano), reais(alt.economia_ano), retorno]);
+  });
+
+  const corpo = document.getElementById("corpo-tabela");
+  // guarda os valores antigos para pintar o que mudou
+  const antigos = [...corpo.querySelectorAll("td")].map(function (celula) {
+    return celula.textContent;
+  });
+  corpo.innerHTML = "";
+
+  let posicao = 0;
+  linhas.forEach(function (valores, i) {
+    const linha = document.createElement("tr");
+    if (i === 0) {
+      linha.className = "linha-hoje";
+    }
+    valores.forEach(function (valor) {
       const celula = document.createElement("td");
       celula.textContent = valor;
+      if (antigos.length > 0 && antigos[posicao] !== valor) {
+        celula.className = "mudou";
+      }
+      posicao++;
       linha.appendChild(celula);
     });
     corpo.appendChild(linha);
   });
+
+  setTimeout(function () {
+    corpo.querySelectorAll(".mudou").forEach(function (celula) {
+      celula.classList.remove("mudou");
+    });
+  }, 1500);
 }
 
 async function enviar(url, corpo) {

@@ -26,7 +26,7 @@ Perguntas depois do teste:
 | Participante | Perfil geral | Data | Situações feitas | Entendeu a recomendação? | Utilidade (1 a 5) | Comentários |
 |---|---|---|---|---|---|---|
 | P1 | adulto, testou pelo link online | 10/11/2026 | Usou o chat, mudou os dados no painel e pediu recomendações | Sim, mas percebeu que a recomendação não batia com os números que ele tinha mudado | Não deu nota | "A tabela embaixo não está atualizando. O chatbot está." Disse que a recomendação usava o que estava na tabela e não o recálculo, e que as respostas do chat são instantâneas, o que achou adequado |
-| P2 | PREENCHER | PREENCHER | PREENCHER | PREENCHER | PREENCHER | PREENCHER |
+| P2 | P1 testou de novo depois do primeiro ajuste. Viu o resumo de cima mudar sozinho, mas achou que a tabela comparativa continuava parada | A tabela já mudava, mas as colunas que ele olhava quase não mudam (investimento é fixo e a economia da placa depende pouco do banho). Colocamos uma linha com a situação de hoje, a coluna Conta/ano, um destaque amarelo no que mudou e um aviso explicando o que não muda | `static/chat.js`, `static/style.css`, `templates/index.html` | PREENCHER | PREENCHER | PREENCHER |
 | P3 | PREENCHER | PREENCHER | PREENCHER | PREENCHER | PREENCHER | PREENCHER |
 
 No perfil geral, escreva só algo como "adulto, mora de aluguel" ou "idoso, casa própria".

@@ -180,6 +180,20 @@ td {
   border-bottom: 1px solid #d3dcd5;
 }
 
+td {
+  transition: background-color 0.6s;
+}
+
+.linha-hoje td {
+  font-weight: bold;
+  background: #f3f5f3;
+}
+
+td.mudou,
+.linha-hoje td.mudou {
+  background: #fff1a8;
+}
+
 .nota {
   font-size: 13px;
   color: #55615a;
@@ -192,5 +206,14 @@ td {
 
   .chat {
     height: 75vh;
+  }
+
+  table {
+    font-size: 13px;
+  }
+
+  th,
+  td {
+    padding: 5px 3px;
   }
 }
