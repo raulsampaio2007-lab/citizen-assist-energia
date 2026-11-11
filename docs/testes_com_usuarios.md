@@ -35,6 +35,8 @@ No perfil geral, escreva só algo como "adulto, mora de aluguel" ou "idoso, casa
 
 ## Ajustes feitos depois dos testes
 
+Os três primeiros ajustes foram feitos na primeira versão da tela, em HTML. Depois trocamos a tela por Streamlit para deixar o projeto todo em Python, então os arquivos `static/` e `templates/` citados abaixo não existem mais. Os problemas que eles corrigiam continuam corrigidos na tela nova.
+
 | O que aconteceu no teste | O que mudamos | Arquivo |
 |---|---|---|
 | P1 mudou números no painel sem clicar em Recalcular. A tabela não mudava e o chat respondia com os valores antigos, apagando o que ele tinha digitado | A tabela agora recalcula sozinha meio segundo depois de digitar, e o chat sempre usa os números que estão no painel | `static/chat.js`, `app.py`, `testes/test_projeto.py` |

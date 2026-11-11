@@ -27,6 +27,10 @@ A necessidade que escolhemos foi a água quente do banho. Analisamos dois casos:
 
 O projeto é todo em Python. A tela é feita com Streamlit, que monta a página a partir do código Python, sem precisar escrever HTML ou JavaScript. As respostas usam as mesmas funções da análise (`calculos.py`). Escolhemos fazer o chat com regras de palavras-chave, sem modelo de linguagem, para o assistente não inventar número. Isso tem um custo: ele só entende os assuntos que programamos, e fora disso avisa que não sabe.
 
+## Vídeo
+
+Vídeo de apresentação (até 3 minutos): https://youtu.be/2d39621otAA
+
 ## Como executar
 
 A versão online está em https://citizen-assist-energia.onrender.com. Ela roda no plano grátis do Render, então a primeira abertura pode levar uns 50 segundos.
