@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Citizen Assist AI - Energia</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Citizen Assist AI</h1>
+    <p>Energia em casa para quem está começando a trabalhar: quanto custa o banho e o que compensa</p>
+  </header>
+
+  <main>
+    <section class="caixa chat">
+      <div id="mensagens"></div>
+      <div id="atalhos">
+        <button data-pergunta="Quanto meu chuveiro gasta?">Quanto meu chuveiro gasta?</button>
+        <button data-pergunta="Como economizar no banho?">Como economizar no banho?</button>
+        <button data-pergunta="Compare as alternativas">Comparar alternativas</button>
+        <button data-pergunta="O que você recomenda para mim?">O que você recomenda?</button>
+        <button data-pergunta="Quais são as limitações?">Limitações</button>
+        <button data-pergunta="Quais são as fontes?">Fontes</button>
+      </div>
+      <form id="form-chat">
+        <input id="campo" type="text" maxlength="500" autocomplete="off"
+               placeholder="Ex: moro sozinho de aluguel, banho de 10 minutos">
+        <button type="submit">Enviar</button>
+      </form>
+    </section>
+
+    <section class="caixa painel">
+      <h2>Dados da sua casa</h2>
+      <form id="form-dados">
+        <label>Pessoas <input type="number" name="pessoas" min="1" max="15"></label>
+        <label>Minutos por banho <input type="number" name="minutos" min="1" max="60"></label>
+        <label>Chuveiro no inverno (W) <input type="number" name="pot_inverno" min="1000" max="12000" step="100"></label>
+        <label>Chuveiro no verão (W) <input type="number" name="pot_verao" min="500" max="12000" step="100"></label>
+        <label>Resto da casa (kWh/mês) <input type="number" name="outros_kwh" min="0" max="3000"></label>
+        <div class="botoes">
+          <button type="submit">Recalcular</button>
+          <button type="button" id="limpar" class="secundario">Voltar ao exemplo</button>
+        </div>
+      </form>
+
+      <h2>Comparação em 12 meses</h2>
+      <p id="resumo"></p>
+      <div class="rolagem">
+        <table>
+          <thead>
+            <tr><th>Alternativa</th><th>Investimento</th><th>Economia/ano</th><th>Retorno</th></tr>
+          </thead>
+          <tbody id="corpo-tabela"></tbody>
+        </table>
+      </div>
+      <p class="nota">Estimativas com tarifa da Enel SP (julho/2026) e bandeira verde. Não é garantia de economia,
+        e as economias não podem ser somadas.</p>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='chat.js') }}"></script>
+</body>
+</html>

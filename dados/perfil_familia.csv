@@ -1,0 +1,7 @@
+campo,valor,unidade,tipo,justificativa
+pessoas,4,pessoas,estimado,Família usada como exemplo no trabalho
+minutos,8,min por banho,estimado,Mesma duração usada no estudo da Poli-USP citado nas referências
+banhos_por_dia,1,banho por pessoa,estimado,Um banho por dia para cada morador
+pot_inverno,5500,W,estimado,Potência comum de chuveiro em 220 V. Confira a etiqueta do seu aparelho
+pot_verao,3500,W,estimado,Potência comum na posição verão. Confira a etiqueta do seu aparelho
+outros_kwh,147,kWh/mês,estimado,"Geladeira, luz, TV e o resto. Escolhido para o total ficar perto de 220 kWh/mês. Troque pelo valor da sua conta"

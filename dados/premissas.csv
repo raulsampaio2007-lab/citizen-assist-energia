@@ -1,0 +1,25 @@
+chave,valor,unidade,periodo,tipo,origem
+tarifa_te,0.31696,R$/kWh sem impostos,04/07/2026 a 03/07/2027,real,enel
+tarifa_tusd,0.47242,R$/kWh sem impostos,04/07/2026 a 03/07/2027,real,enel
+pis_cofins,0.05,fração da conta,2026,estimado,"Varia mês a mês na fatura, usamos 5% como valor redondo"
+icms_ate_90,0.00,fração da conta,2026,real,icms_sp
+icms_ate_200,0.12,fração da conta,2026,real,icms_sp
+icms_acima_200,0.18,fração da conta,2026,real,icms_sp
+minimo_bifasico,50,kWh/mês,2026,real,ren1000
+fio_b,0.28,R$/kWh sem impostos,2026,estimado,"Cerca de 60% da TUSD, não achamos o valor exato da Enel SP"
+fio_b_pago,0.60,fração do fio B,2026,real,lei14300
+fator_co2,0.0545,kg CO2/kWh,média de 2024,real,bradesco
+co2_ciclo_vida_fv,0.041,kg CO2eq/kWh,mediana de estudos,real,ipcc
+vazao_eletrico,4.2,L/min,medido em 2010,real,cirra
+vazao_solar,8.4,L/min,medido em 2010,real,cirra
+hab_minutos,5,min por banho,meta do grupo,estimado,Meta adotada pelo grupo para a alternativa de hábitos
+fracao_solar,0.70,fração da energia do banho,média anual,real,ufrgs
+solar_kit,3359.57,R$,SINAPI 09/2026,real,sinapi
+solar_adaptacao,1500,R$,2026,estimado,"Tubulação de água quente e suporte, que o SINAPI não inclui"
+solar_manutencao,100,R$/ano,2026,estimado,Limpeza e revisão simples por ano
+fv_potencia,2.0,kWp,2026,estimado,"Menor sistema da pesquisa da Greener, cerca de 4 placas"
+fv_preco_w,3.62,R$/W,junho de 2026,real,greener
+fv_pr,0.75,fração,2026,estimado,"Perdas de calor, sujeira, cabos e inversor, valor comum em projetos"
+fv_simultaneo,0.30,fração da geração,2026,estimado,Parte consumida na hora em que gera
+fv_manutencao,150,R$/ano,2026,estimado,Limpeza das placas e reserva para reparo
+horizonte,10,anos,2026,estimado,Período escolhido para comparar as alternativas

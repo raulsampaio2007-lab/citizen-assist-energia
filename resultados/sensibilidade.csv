@@ -1,0 +1,13 @@
+alternativa,premissa_alterada,novo_valor,economia_ano_rs,retorno_anos,saldo_10_anos_rs
+Aquecedor,fracao_solar,0.5,597.74,9.8,117.8
+Aquecedor,fracao_solar,0.85,889.51,6.2,3035.52
+Aquecedor,solar_adaptacao,0,764.46,5.1,3285.07
+Aquecedor,solar_adaptacao,5640.43,764.46,13.5,-2355.36
+Fotovoltaico,fv_pr,0.65,1823.43,4.3,9494.27
+Fotovoltaico,fv_pr,0.8,2071.99,3.8,11979.88
+Fotovoltaico,fv_preco_w,2.91,1994.58,3.2,12625.83
+Fotovoltaico,fv_preco_w,4.5,1994.58,4.9,9445.83
+Fotovoltaico,fio_b,0.4,1947.28,4.0,10732.76
+Fotovoltaico,minimo_bifasico,100,1544.75,5.2,6707.46
+Habitos,hab_minutos,6,371.35,0,3713.49
+Habitos,hab_minutos,7,271.41,0,2714.11

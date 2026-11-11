@@ -1,0 +1,17 @@
+id,titulo,url
+enel,"Enel SP: tarifas de energia (REH ANEEL 3.596/2026)",https://www.enel.com.br/pt-saopaulo/Para_Voce/tarifa-energia-eletrica.html
+ren1000,"ANEEL: Resolução Normativa 1.000/2021 (custo de disponibilidade)",https://www2.aneel.gov.br/cedoc/ren20211000.html
+icms_sp,"Esfera Energia: faixas de ICMS na conta de luz em SP",https://blog.esferaenergia.com.br/economizar-em-casa/o-que-e-icms-cobrado-conta-de-luz
+lei14300,"Canal Solar: cobrança do fio B pela Lei 14.300",https://canalsolar.com.br/tarifacao-fio-b-lei-14-300/
+greener,"pv magazine: preços de sistemas solares no 1o semestre de 2026 (estudo Greener)",https://www.pv-magazine.com/2026/09/26/pv-system-costs-increase-7-percent-brazil-h1/
+sinapi,"SINAPI 103517: aquecedor solar compacto de 200 L",https://orcamentor.com/composicao/103517/
+nasa,"NASA POWER: irradiação média em São Paulo (-23,55; -46,63)",https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude=-46.63&latitude=-23.55&format=JSON
+cresesb,"CRESESB SunData: irradiação solar por localidade",https://cresesb.cepel.br/index.php?section=sundata
+ufrgs,"Altoé et al., Ambiente Construído: aquecedor solar x chuveiro elétrico",https://seer.ufrgs.br/index.php/ambienteconstruido/article/view/25706
+cirra,"InfoMoney: estudo Poli-USP/Cirra sobre custo do banho e vazão (2010)",https://www.infomoney.com.br/?p=575853
+mcti,"MCTI: fatores de emissão de CO2 do Sistema Interligado Nacional",https://www.gov.br/mcti/pt-br/acompanhe-o-mcti/sirene/dados-e-ferramentas/fatores-de-emissao
+bradesco,"Inventário de GEE 2024 do Bradesco (cita o fator médio de 2024 do SIN)",https://assets.bradesco/content/dam/portal-bradesco/assets/classic/pdf/sustentabilidade/bradesco-inventario-de-emissoes-GEE-2024.pdf
+ipcc,"IPCC AR5 WG3, Anexo III: emissões no ciclo de vida",https://www.ipcc.ch/site/assets/uploads/2018/02/ipcc_wg3_ar5_annex-iii.pdf
+abrasol,"eixos: chuveiro elétrico e horário de pico, segundo a Abrasol",https://eixos.com.br/eventos/energia-solar-termica-pode-aliviar-rede-eletrica-em-horarios-de-pico-diz-abrasol/
+tarifa_social,"O Povo: isenção na conta de luz até 80 kWh",https://www.opovo.com.br/noticias/economia/2025/06/11/isencao-na-conta-de-luz-para-consumo-de-ate-80-kwh-comeca-em-julho-saiba-mais.html
+bandeira,"Bulbe Energia: valores das bandeiras tarifárias em 2026",https://bulbeenergia.com.br/blog/bandeiras-tarifarias-na-conta-de-luz/
