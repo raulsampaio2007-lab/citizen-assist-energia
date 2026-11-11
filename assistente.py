@@ -216,10 +216,11 @@ def resposta_comparar(perfil):
     dados = calculos.comparar(perfil)
     linhas = [f"Hoje a conta estimada é de {reais(dados['hoje']['conta_ano'])} por ano. Comparando as opções em 12 meses:"]
     for a in dados["alternativas"]:
+        # mesmas colunas da tabela do painel, para o chat e a tabela baterem
         linhas.append(f"\n{a['nome']}\nInvestimento: {reais(a['investimento'])}\n"
+                      f"Conta por ano: {reais(a['conta_ano'])}\n"
                       f"Economia por ano: {reais(a['economia_ano'])}\n"
-                      f"Retorno: {'imediato' if a['investimento'] == 0 else texto_retorno(a['retorno_anos'])}\n"
-                      f"Custo por kWh evitado: {reais(a['custo_kwh_evitado'] or 0)}")
+                      f"Retorno: {'imediato' if a['investimento'] == 0 else texto_retorno(a['retorno_anos'])}")
     linhas.append("\nAs economias não podem ser somadas: se o banho já gasta menos, o aquecedor tem menos para economizar. "
                   "A placa também cobre o resto da casa, por isso a economia dela parece maior.")
     return "\n".join(linhas), ["enel", "sinapi", "greener", "ufrgs", "nasa"]
