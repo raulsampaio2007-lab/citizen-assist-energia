@@ -29,7 +29,7 @@ O projeto é todo em Python. A tela é feita com Streamlit, que monta a página 
 
 ## Vídeo
 
-Vídeo de apresentação (até 3 minutos): https://youtu.be/z00UayAub04
+Vídeo de apresentação (até 3 minutos): https://youtu.be/5HIHjlFEe3I
 
 ## Como executar
 
