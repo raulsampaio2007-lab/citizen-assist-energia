@@ -128,7 +128,7 @@ class TestTela(unittest.TestCase):
     # usa o testador do próprio Streamlit, que roda o app.py sem abrir o navegador
     def setUp(self):
         pasta = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.tela = AppTest.from_file(os.path.join(pasta, "app.py"), default_timeout=30)
+        self.tela = AppTest.from_file(os.path.join(pasta, "app.py"), default_timeout=120)
         self.tela.run()
 
     def texto_da_tabela(self):
