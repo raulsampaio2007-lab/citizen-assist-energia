@@ -1,4 +1,4 @@
-# Gera as tabelas da pasta resultados. Rode com: python análise.py
+# Gera as tabelas da pasta resultados. Rode com: python analise.py
 import csv
 import os
 
