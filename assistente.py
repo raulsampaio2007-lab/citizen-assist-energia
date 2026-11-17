@@ -2,9 +2,6 @@
 # A gente preferiu regras em vez de um modelo de linguagem porque aqui o número
 # precisa ser igual ao da análise. O assistente só entende a pergunta e chama
 # as funções de calculos.py, então ele nunca inventa um valor.
-import re
-import unicodedata
-
 import calculos
 
 AVISO = ("Isso é uma estimativa feita com os dados informados, não uma garantia de economia. "
@@ -30,9 +27,71 @@ SUGESTOES = ("Você pode me perguntar quanto o chuveiro gasta, como economizar n
              "\"moro sozinho de aluguel, banho de 10 minutos\".")
 
 
+ACENTOS = {"á": "a", "à": "a", "â": "a", "ã": "a", "é": "e", "ê": "e", "í": "i",
+           "ó": "o", "ô": "o", "õ": "o", "ú": "u", "ü": "u", "ç": "c"}
+
+
 def normalizar(texto):
-    texto = unicodedata.normalize("NFD", texto.lower())
-    return "".join(c for c in texto if unicodedata.category(c) != "Mn").strip()
+    # deixa tudo minúsculo e sem acento, assim "Opções" e "opcoes" viram a mesma coisa
+    resultado = ""
+    for letra in texto.lower():
+        if letra in ACENTOS:
+            resultado += ACENTOS[letra]
+        else:
+            resultado += letra
+    return resultado.strip()
+
+
+def separar_palavras(texto):
+    # quebra a mensagem em pedaços: "banho de 10min." vira ["banho", "de", "10", "min", "."]
+    # ponto e vírgula no meio de número ficam (5.500 e 5,5), o resto da pontuação sai
+    resultado = ""
+    for i in range(len(texto)):
+        letra = texto[i]
+        antes = texto[i - 1] if i > 0 else " "
+        depois = texto[i + 1] if i + 1 < len(texto) else " "
+        if letra.isdigit():
+            if not antes.isdigit() and antes not in ".,":
+                resultado += " "
+            resultado += letra
+        elif letra in ".," and antes.isdigit() and depois.isdigit():
+            resultado += letra
+        elif letra.isalpha() or letra == "$":
+            if antes.isdigit():
+                resultado += " "
+            resultado += letra
+        elif letra == ".":
+            # ponto final vira uma palavra separada, para saber onde a frase acaba
+            resultado += " . "
+        else:
+            resultado += " "
+    return resultado.split()
+
+
+def eh_numero(palavra):
+    return palavra[0].isdigit()
+
+
+def numero_antes_de(palavras, inicios):
+    # procura um número logo antes de uma palavra que começa com algum dos textos da lista
+    # ex: ["somos", "4", "pessoas"] com ["pessoas"] devolve "4"
+    for i in range(1, len(palavras)):
+        if eh_numero(palavras[i - 1]):
+            for inicio in inicios:
+                if palavras[i].startswith(inicio):
+                    return palavras[i - 1]
+    return None
+
+
+def achar_potencia(palavras):
+    # devolve a potência em watts se a mensagem tiver algo como "5500 w" ou "5,5 kw"
+    for i in range(1, len(palavras)):
+        if eh_numero(palavras[i - 1]):
+            if palavras[i] == "kw":
+                return ler_valor(palavras[i - 1]) * 1000
+            if palavras[i] in ["w", "watt", "watts"]:
+                return ler_valor(palavras[i - 1])
+    return None
 
 
 def reais(valor):
@@ -56,8 +115,15 @@ def texto_retorno(anos):
 def ler_valor(texto):
     # aceita 5500, 5.500 e 5,5
     texto = texto.replace(" ", "")
-    if re.fullmatch(r"\d{1,3}(\.\d{3})+", texto):
-        texto = texto.replace(".", "")
+    if "." in texto and "," not in texto:
+        partes = texto.split(".")
+        # 5.500 e 12.000 são milhar; 5.5 é decimal
+        milhar = len(partes[0]) <= 3
+        for parte in partes[1:]:
+            if len(parte) != 3:
+                milhar = False
+        if milhar:
+            texto = texto.replace(".", "")
     return float(texto.replace(",", "."))
 
 
@@ -78,25 +144,23 @@ def corrigir_limites(perfil):
 def extrair_dados(texto, perfil):
     """Procura dados da família na mensagem e devolve o que entendeu."""
     entendi = []
+    palavras = separar_palavras(texto)
 
-    achou = re.search(r"(\d+)\s*(pessoas|moradores)", texto)
-    if achou:
-        perfil["pessoas"] = int(achou.group(1))
-        entendi.append(f"{achou.group(1)} pessoas na casa")
+    pessoas = numero_antes_de(palavras, ["pessoas", "moradores"])
+    if pessoas:
+        perfil["pessoas"] = int(ler_valor(pessoas))
+        entendi.append(f"{pessoas} pessoas na casa")
     elif "moro sozinh" in texto:
         perfil["pessoas"] = 1
         entendi.append("1 pessoa na casa")
 
-    achou = re.search(r"(\d+)\s*min", texto)
-    if achou:
-        perfil["minutos"] = int(achou.group(1))
-        entendi.append(f"banho de {achou.group(1)} minutos")
+    minutos = numero_antes_de(palavras, ["min"])
+    if minutos:
+        perfil["minutos"] = int(ler_valor(minutos))
+        entendi.append(f"banho de {minutos} minutos")
 
-    achou = re.search(r"(\d[\d.,]*)\s*(kw|w|watts?)\b", texto)
-    if achou and ("chuveiro" in texto or "ducha" in texto):
-        potencia = ler_valor(achou.group(1))
-        if achou.group(2) == "kw":
-            potencia = potencia * 1000
+    potencia = achar_potencia(palavras)
+    if potencia and ("chuveiro" in texto or "ducha" in texto):
         perfil["pot_inverno"] = potencia
         # mesma proporção entre verão e inverno do chuveiro de 5500 W
         perfil["pot_verao"] = round(potencia * 3500 / 5500)
@@ -105,14 +169,14 @@ def extrair_dados(texto, perfil):
     chuveiro_mes = calculos.cenario_hoje(perfil)["chuveiro"]
     media_chuveiro = sum(chuveiro_mes) / 12
 
-    achou = re.search(r"(\d[\d.,]*)\s*kwh", texto)
-    achou_conta = re.search(r"conta[^.\d]*r\$\s*(\d[\d.,]*)", texto)
-    if achou:
-        total = ler_valor(achou.group(1))
+    kwh = numero_antes_de(palavras, ["kwh"])
+    valor_conta = numero_da_conta(palavras)
+    if kwh:
+        total = ler_valor(kwh)
         perfil["outros_kwh"] = max(total - media_chuveiro, 0)
         entendi.append(f"consumo total de {numero_br(total)} kWh por mês")
-    elif achou_conta:
-        valor = ler_valor(achou_conta.group(1))
+    elif valor_conta:
+        valor = ler_valor(valor_conta)
         total = valor / calculos.preco_kwh(220)
         perfil["outros_kwh"] = max(total - media_chuveiro, 0)
         entendi.append(f"conta de {reais(valor)}, perto de {numero_br(total)} kWh por mês")
@@ -127,35 +191,80 @@ def extrair_dados(texto, perfil):
     if any(p in texto for p in ["cadunico", "bolsa familia", "baixa renda"]):
         perfil["cadunico"] = True
 
-    achou = re.search(r"(tenho|temos|guardad\w*|orcamento|investir|gastar)[^.\d]*r?\$?\s*(\d[\d.,]*)\s*(mil)?", texto)
-    if achou and "kwh" not in achou.group(0) and "min" not in achou.group(0):
-        valor = ler_valor(achou.group(2))
-        if achou.group(3):
-            valor = valor * 1000
-        if valor >= 100:
-            perfil["orcamento"] = valor
-            entendi.append(f"orçamento de {reais(valor)}")
+    valor = numero_do_orcamento(palavras)
+    if valor is not None and valor >= 100:
+        perfil["orcamento"] = valor
+        entendi.append(f"orçamento de {reais(valor)}")
 
     return entendi
+
+
+def numero_da_conta(palavras):
+    # "minha conta é R$ 300": pega o número que vem depois de "conta" e de "r$"
+    for i in range(len(palavras)):
+        if palavras[i] == "conta":
+            viu_cifrao = False
+            for j in range(i + 1, len(palavras)):
+                if palavras[j] == ".":
+                    break
+                if eh_numero(palavras[j]):
+                    if viu_cifrao:
+                        return palavras[j]
+                    break
+                if palavras[j] == "r$":
+                    viu_cifrao = True
+    return None
+
+
+def numero_do_orcamento(palavras):
+    # "temos R$ 5000 para investir", "tenho 3 mil guardados"
+    inicio = ["tenho", "temos", "orcamento", "investir", "gastar"]
+    for i in range(len(palavras)):
+        if palavras[i] in inicio or palavras[i].startswith("guardad"):
+            for j in range(i + 1, len(palavras)):
+                if palavras[j] == ".":
+                    break
+                if eh_numero(palavras[j]):
+                    # se no meio tinha kwh ou minutos, o número não é dinheiro
+                    meio = palavras[i + 1:j]
+                    for palavra in meio:
+                        if "kwh" in palavra or "min" in palavra:
+                            return None
+                    valor = ler_valor(palavras[j])
+                    if j + 1 < len(palavras) and palavras[j + 1] == "mil":
+                        valor = valor * 1000
+                    return valor
+    return None
 
 
 def detectar_intencao(texto):
     pontos = {}
     for intencao, lista in PALAVRAS.items():
-        pontos[intencao] = sum(1 for p in lista if p in texto)
+        pontos[intencao] = 0
+        for palavra in lista:
+            if palavra in texto:
+                pontos[intencao] += 1
 
     # perguntou dos dois solares juntos, então quer comparar
-    if pontos["aquecedor"] and re.search(r"placa|painel|paineis|fotovolt", texto):
+    falou_de_placa = "placa" in texto or "painel" in texto or "paineis" in texto or "fotovolt" in texto
+    if pontos["aquecedor"] and falou_de_placa:
         return "comparar"
     # "aquecedor solar" não e sobre placa fotovoltaica
     if pontos["aquecedor"]:
         pontos["fotovoltaica"] = 0
 
-    melhor = max(pontos, key=pontos.get)
+    # fica com a intenção que teve mais palavras encontradas
+    melhor = None
+    for intencao in pontos:
+        if melhor is None or pontos[intencao] > pontos[melhor]:
+            melhor = intencao
     if pontos[melhor] > 0:
         return melhor
-    if re.search(r"\b(oi|ola|bom dia|boa tarde|boa noite|e ai)\b", texto):
-        return "saudacao"
+
+    frase = " " + " ".join(separar_palavras(texto)) + " "
+    for oi in ["oi", "ola", "bom dia", "boa tarde", "boa noite", "e ai"]:
+        if " " + oi + " " in frase:
+            return "saudacao"
     return None
 
 
@@ -307,15 +416,13 @@ def resposta_referencias(perfil):
 
 
 def resposta_aparelho(texto):
-    achou = re.search(r"(\d[\d.,]*)\s*(kw|w|watts?)\b", texto)
-    potencia = ler_valor(achou.group(1))
-    if achou.group(2) == "kw":
-        potencia = potencia * 1000
-    horas = re.search(r"(\d+[.,]?\d*)\s*h", texto)
+    palavras = separar_palavras(texto)
+    potencia = achar_potencia(palavras)
+    horas = numero_antes_de(palavras, ["h"])
     if not horas:
         return (f"Entendi {numero_br(potencia)} W. Quantas horas por dia ele fica ligado? "
                 "Pode mandar assim: 100 W, 8 horas por dia."), []
-    horas_dia = ler_valor(horas.group(1))
+    horas_dia = ler_valor(horas)
     kwh = calculos.consumo_aparelho(potencia, horas_dia)
     custo = kwh * calculos.preco_kwh(220)
     return (f"Ligado {numero_br(horas_dia, 1)} h por dia, um aparelho de {numero_br(potencia)} W gasta "
@@ -323,7 +430,9 @@ def resposta_aparelho(texto):
             "ligam e desligam o motor, então gastam menos do que essa conta mostra."), ["enel"]
 
 
-REFERENCIAS = {linha["id"]: linha for linha in calculos.ler_csv("referencias.csv")}
+REFERENCIAS = {}
+for linha in calculos.ler_csv("referencias.csv"):
+    REFERENCIAS[linha["id"]] = linha
 
 RESPOSTAS = {
     "referencias": resposta_referencias,
@@ -344,7 +453,7 @@ def responder(mensagem, perfil):
     # copia para não mexer no perfil antigo caso alguma conta de erro
     perfil = dict(perfil)
 
-    tem_potencia = re.search(r"\d\s*(kw|w|watts?)\b", texto)
+    tem_potencia = achar_potencia(separar_palavras(texto))
     if tem_potencia and "chuveiro" not in texto and "ducha" not in texto:
         resposta, ids = resposta_aparelho(texto)
         return montar(resposta, ids, perfil)
